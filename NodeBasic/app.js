@@ -23,15 +23,27 @@ const server = http.createServer((req, res) => {
             console.log(chunks);
             body.push(chunks);
         });
-        req.on('end', () => {
+        /*
+            return statement here wiats for the completion of the code .
+            Else the code below is executed write after this since it a asynchronous method that runs in the future.
+        */
+        return req.on('end', () => {
             const parsedBody = Buffer.concat(body).toString();
             const message = parsedBody.split('=')[1];
-            fs.writeFileSync('message.txt', message);
+            //fs.writeFileSync('message.txt', message);
+            /*
+                This simply is the synchronized statement that waits for the file-things to be complete and then runs other code.
+                When working for a files with thousands of megabytes this code waits for the process and takes a longer time.
+                So we must be sure what the file we are working on.
 
+            */
+            fs.writeFile('message.txt', message, (err) => {
+                res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end();
+            });
         });
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end();
+
     }
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
@@ -39,7 +51,6 @@ const server = http.createServer((req, res) => {
     res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
     res.write('</html>');
     res.end();
-
 });
 
 server.listen(3000);
