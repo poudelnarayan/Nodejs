@@ -24,6 +24,8 @@ will reach first , else 'delete' would be considerd dynamic and will be set into
 
 router.get("/cart", shopController.getCart);
 
+router.post("/cart", shopController.postCart);
+
 router.get("/orders", shopController.getOrders);
 
 router.get("/checkout", shopController.getCheckout);
