@@ -12,8 +12,13 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId; // productId , because in the dynamic router we use this name after colon ':'
-  console.log(prodId);
-  res.redirect('/');
+  Product.findById(prodId, (product) => {
+    res.render("shop/product-detail", {
+      product: product,
+      pageTitle: product.title,
+      path: "/products",
+    });
+  });
 };
 
 exports.getIndex = (req, res, next) => {
