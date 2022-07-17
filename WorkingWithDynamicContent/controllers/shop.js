@@ -15,7 +15,35 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId; // productId , because in the dynamic router we use this name after colon ':'
-  Product.findById(prodId)
+
+  
+  
+    Product.findAll({ where: { id: prodId } }) // this gives us a array
+    .then((products) => {
+      res.render("shop/product-detail", {
+        product: products[0],
+        pageTitle: products[0].title,
+        path: "/products",
+      });
+    })
+    .catch((err) => console.log(err));
+
+  /*
+  ALTERNATIVE
+  Product.findByPk(prodId)
+    .then((product) => {
+      res.render("shop/product-detail", {
+        product: product,
+        pageTitle: product.title,
+        path: "/products",
+      });
+    })
+    .catch((err) => console.log(err));
+ 
+    */
+
+  /*
+Product.findById(prodId)
     .then(([product]) => {
       res.render("shop/product-detail", {
         product: product[0],
@@ -24,6 +52,13 @@ exports.getProduct = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
+  */
+
+  /*
+  /// DEPRECATED findById
+  Sequelize also has a method of findById but a difference is it doesnot returns an array of products but a single product
+
+  */
 };
 
 exports.getIndex = (req, res, next) => {
