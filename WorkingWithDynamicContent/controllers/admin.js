@@ -29,15 +29,16 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
-  Product.findById(prodId, (product) => {
-    if (!product) {
+
+  Product.findAll({ where: { id: prodId } }).then((products) => {
+    if (!products) {
       return res.redirect("/");
     }
     res.render("admin/edit-product", {
       pageTitle: "Edit Product",
       path: "/admin/edit-product",
       editing: editMode,
-      product: product,
+      product: products[0],
     });
   });
 };
@@ -48,16 +49,24 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDescription = req.body.description;
-  const updatedProduct = new Product(
-    prodId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDescription,
-    updatedPrice
-  );
-  console.log("prodId");
-  console.log(prodId);
-  updatedProduct.save();
+  Product.findByPk(prodId)
+    .then((product) => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.imageUrl = updatedImageUrl;
+      product.description = updatedDescription;
+      return product.save();
+      /*
+      This is another method provided by sequelize and this now takes the product as we edit it and saves it back to the database.
+      If the product doesnot exists yet it will create a new one , but if it does as this one , then it will overwrite
+      or update the old one with our new values.
+
+      */
+    })
+    .then((result) => {
+      console.log("UPDATED PRODUCT");
+    })
+    .catch((err) => console.log(err));
   res.redirect("/admin/products");
 };
 
