@@ -16,9 +16,7 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId; // productId , because in the dynamic router we use this name after colon ':'
 
-  
-  
-    Product.findAll({ where: { id: prodId } }) // this gives us a array
+  Product.findAll({ where: { id: prodId } }) // this gives us a array
     .then((products) => {
       res.render("shop/product-detail", {
         product: products[0],
