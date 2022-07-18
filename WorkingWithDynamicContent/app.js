@@ -18,6 +18,19 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      /*
+We can simply add a new field to our request object. We should just make sure we don't overwrite an existing one , like body.
+
+      */
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
@@ -30,9 +43,22 @@ CASCADE tells that if the user is deleted delete his products too.
 User.hasMany(Product);
 
 sequelize
-  .sync({ force: true }) // force = true overrides the files with recent changes
+  .sync()
   .then((result) => {
+    return User.findByPk(1);
     // console.log(result);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({
+        name: "Narayan",
+        email: "test@test.com",
+      });
+    }
+    return user;
+  })
+  .then((user) => {
+    // console.log(user);
     app.listen(3000);
   })
   .catch((err) => console.log(err));
