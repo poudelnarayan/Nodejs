@@ -13,17 +13,21 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    })
     .then((result) => {
       console.log(result);
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err)); // creating associated object
+  /*
+  If you setup association , sequelize adds special methods depending on the association you added.
+  */
 };
 
 exports.getEditProduct = (req, res, next) => {
