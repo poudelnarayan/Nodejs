@@ -96,7 +96,7 @@ exports.postCart = (req, res, next) => {
 
       return cart.getProducts({ where: { id: prodId } });
     })
-    .then(async (products) => {
+    .then((products) => {
       let product;
       if (products.length > 0) {
         product = products[0];
@@ -106,7 +106,7 @@ exports.postCart = (req, res, next) => {
         // ....
       }
       try {
-        const product_1 = await Product.findByPk(prodId);
+        const product_1 = Product.findByPk(prodId);
         return fetchedCart.addProduct(product_1, {
           through: { quantity: newQuantity },
         });
@@ -114,7 +114,10 @@ exports.postCart = (req, res, next) => {
         return console.log(err);
       }
     })
-    .then((err) => console.log(err));
+    .then(() => {
+      res.redirect("/cart");
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
